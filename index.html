@@ -1,0 +1,79 @@
+let table;
+let img;
+let count=5;
+let dataSet=1;
+timedelay = 0;
+let button;
+let number;
+let tableData;
+
+function preload() {
+  tableConfirmed = loadTable('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv', 'csv','header');
+  tableDeaths = loadTable('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv','csv','header');
+  tableRecovered = loadTable('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv','csv','header');
+  tableConfirmedUSA = loadTable('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv', 'csv','header');
+  tableDeathsUSA = loadTable('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv','csv','header');
+  img = createImg('https://github.com/mpsteenstrup/Covid19DatabaseTutorial/blob/master/images/map.jpg?raw=true');
+  img.hide();
+}
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  background(0,100,200);
+  textSize(60);
+  fill(200);
+  frameRate(10);
+  noStroke();
+  button = createButton('Skift dataset');
+  button.position(50, 120);
+}
+
+function draw(){
+  if(dataSet==1){
+    tableData = tableConfirmed;
+    header = "Confirmed in world";
+    longitude = "Long";
+} else;if(dataSet==2){
+  tableData = tableDeaths;
+  header = "Deaths in world";
+  longitude = "Long";
+} else;if(dataSet==3){
+  tableData = tableRecovered;
+  header = "Recovered in world";
+  longitude = "Long";
+} else;if(dataSet==4){
+  tableData = tableConfirmedUSA;
+  header = "Confirmed in USA";
+  longitude = "Long_";
+} else;if(dataSet==5){
+  tableData = tableDeathsUSA;
+  header = "Deaths in USA";
+  longitude = "Long_";}
+    
+  frameRate(20/log(count));
+  background(0,100,200);
+  image(img,400-360,400-360*0.84,360*2,440);
+  fill(255)
+  text(tableData.columns[count],550,150);
+  lat = tableData.getColumn('Lat');
+  long = tableData.getColumn(longitude);
+  number = tableData.getColumn(count);
+  for (i=0;i<tableData.getRowCount();i++){
+      ellipse(400+long[i]*2,400-lat[i]*2,log(number[i]),log(number[i]));
+  }
+    text(header,100,90);
+    count += 1;
+  if (count>tableData.getColumnCount()-1){
+    count = tableData.getColumnCount()-1;
+  }    
+  function changeDataSet(){
+  dataSet+=1
+  if(dataSet>5){
+    dataSet=1}
+  if(dataSet<4){
+    count = 5;
+  } else{
+    count = 50;
+  }
+}
+button.mousePressed(changeDataSet); 
+}
